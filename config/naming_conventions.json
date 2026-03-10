@@ -1,0 +1,39 @@
+{
+  "_comment": "Archivo de convenciones de nombres empresariales InfiniteBit.",
+  "_instructions": "Completa las secciones 'convention' y 'fieldMappings' con tus reglas personalizadas.",
+  "_status": "PENDIENTE — El usuario debe configurar este archivo antes de ejecutar el sistema.",
+
+  "convention": {
+    "prefix": "IB_",
+    "style": "PascalCase",
+    "examples": ["IB_UserId", "IB_CreatedAt", "IB_OrderStatus"],
+    "_note": "Reemplaza 'prefix' y 'style' con tu convención real. Estilos válidos: PascalCase | UPPER_SNAKE | camelCase"
+  },
+
+  "fieldMappings": {
+    "_note": "Define aquí tus mapeos personalizados campo_original → IB_NombreEmpresarial",
+    "_example": {
+      "id": "IB_Id",
+      "created_at": "IB_CreatedAt",
+      "user_id": "IB_UserId",
+      "order_status": "IB_OrderStatus",
+      "total_amount": "IB_TotalAmount"
+    },
+    "_yourMappings": {}
+  },
+
+  "reserved": {
+    "_note": "Campos que NUNCA deben renombrarse",
+    "fields": []
+  },
+
+  "customPrefixes": {
+    "_note": "Prefijos adicionales por dominio de negocio",
+    "_example": {
+      "payments": "IB_PAY_",
+      "users": "IB_USR_",
+      "orders": "IB_ORD_"
+    },
+    "domains": {}
+  }
+}
