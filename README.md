@@ -57,31 +57,33 @@ validando que cumpla con los estándares corporativos antes de entregar el resul
 
 ```
 DevComMexico/
-├── orchestrator.py                    # Punto de entrada principal
-├── requirements.txt
-│
-├── agents/
-│   ├── enterprise_formatter_agent.py  # Sub-agente 1: Formateador
-│   └── format_validator_agent.py      # Sub-agente 2: Validador
-│
-├── skills/
-│   ├── enterprise_formatter_skill.md  # Reglas del Agent 1
-│   └── format_validator_skill.md      # Reglas del Agent 2
-│
-├── .claude/
-│   └── commands/
-│       ├── enterprise-formatter.md    # Slash command /enterprise-formatter
-│       └── format-validator.md        # Slash command /format-validator
-│
-├── config/
-│   ├── enterprise_config.json         # Configuración InfiniteBit
-│   └── naming_conventions.json        # <- CONFIGURA AQUI tus convenciones
-│
-├── examples/
-│   └── input_example.json             # Ejemplo de input para testing
-│
-└── output/                            # Resultados generados (auto-creado)
-    └── IB_*.json
+└── orchestrators/
+    └── enterprise-api-formatter/      # <- Este orquestador
+        ├── orchestrator.py            # Punto de entrada principal
+        ├── requirements.txt
+        │
+        ├── agents/
+        │   ├── enterprise_formatter_agent.py  # Sub-agente 1: Formateador
+        │   └── format_validator_agent.py      # Sub-agente 2: Validador
+        │
+        ├── skills/
+        │   ├── enterprise_formatter_skill.md  # Reglas del Agent 1
+        │   └── format_validator_skill.md      # Reglas del Agent 2
+        │
+        ├── .claude/
+        │   └── commands/
+        │       ├── enterprise-formatter.md    # Slash command /enterprise-formatter
+        │       └── format-validator.md        # Slash command /format-validator
+        │
+        ├── config/
+        │   ├── enterprise_config.json         # Configuracion InfiniteBit
+        │   └── naming_conventions.json        # <- CONFIGURA AQUI tus convenciones
+        │
+        ├── examples/
+        │   └── input_example.json             # Ejemplo de input para testing
+        │
+        └── output/                            # Resultados generados (auto-creado)
+            └── IB_*.json
 ```
 
 ---
@@ -125,6 +127,7 @@ Edita `config/naming_conventions.json` con tus reglas personalizadas:
 ### Modo interactivo (recomendado)
 
 ```bash
+cd orchestrators/enterprise-api-formatter
 python orchestrator.py
 ```
 
@@ -138,6 +141,7 @@ El sistema solicitará:
 ### Modo CI / Testing (input desde archivo)
 
 ```bash
+cd orchestrators/enterprise-api-formatter
 python orchestrator.py --json-input examples/input_example.json
 ```
 
