@@ -1,1 +1,6 @@
+# ── Anthropic (proveedor default) ─────────────────────────────────────────────
 anthropic>=0.40.0
+
+# ── OpenAI y proveedores compatibles ──────────────────────────────────────────
+# Requerido para: OpenAI, Ollama, Groq, Azure OpenAI, LM Studio, Together AI, etc.
+openai>=1.30.0
