@@ -93,13 +93,52 @@ DevComMexico/
 ### 1. Instalar dependencias
 
 ```bash
+cd orchestrators/enterprise-api-formatter
 pip install -r requirements.txt
 ```
 
-### 2. Configurar API Key de Anthropic
+### 2. Elegir proveedor de IA
 
+El sistema soporta múltiples proveedores. Configura via variables de entorno:
+
+#### Anthropic (Claude) — default
 ```bash
-export ANTHROPIC_API_KEY="tu-api-key-aqui"
+export LLM_PROVIDER=anthropic
+export LLM_MODEL=claude-opus-4-6
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+#### OpenAI (GPT-4o, GPT-4-turbo, etc.)
+```bash
+export LLM_PROVIDER=openai
+export LLM_MODEL=gpt-4o
+export OPENAI_API_KEY=sk-...
+```
+
+#### Ollama — modelos locales (sin costo, sin internet)
+```bash
+# Primero instala Ollama: https://ollama.com
+ollama pull llama3.2
+
+export LLM_PROVIDER=ollama
+export LLM_MODEL=llama3.2
+# LLM_BASE_URL default: http://localhost:11434/v1
+```
+
+#### Groq (ultra rapido, tier gratuito disponible)
+```bash
+export LLM_PROVIDER=groq
+export LLM_MODEL=llama-3.3-70b-versatile
+export OPENAI_API_KEY=gsk_...
+export LLM_BASE_URL=https://api.groq.com/openai/v1
+```
+
+#### LM Studio u otro compatible OpenAI
+```bash
+export LLM_PROVIDER=custom
+export LLM_MODEL=nombre-del-modelo-local
+export LLM_BASE_URL=http://localhost:1234/v1
+export LLM_API_KEY=lm-studio
 ```
 
 ### 3. Configurar convenciones de nombres (importante)
@@ -147,6 +186,19 @@ python orchestrator.py --json-input examples/input_example.json
 
 ---
 
+## Proveedores soportados
+
+| Proveedor | Variable `LLM_PROVIDER` | Requiere API Key | Modelos ejemplo |
+|-----------|------------------------|------------------|-----------------|
+| Anthropic | `anthropic` (default) | `ANTHROPIC_API_KEY` | claude-opus-4-6, claude-sonnet-4-6 |
+| OpenAI | `openai` | `OPENAI_API_KEY` | gpt-4o, gpt-4-turbo |
+| Ollama (local) | `ollama` | No | llama3.2, mistral, qwen2.5 |
+| Groq | `groq` | `OPENAI_API_KEY` | llama-3.3-70b-versatile |
+| Azure OpenAI | `azure` | `OPENAI_API_KEY` | gpt-4o |
+| LM Studio / Custom | `custom` | `LLM_API_KEY` | cualquiera |
+
+---
+
 ## Formato de Output
 
 El resultado se guarda en `output/IB_<api>_<timestamp>.json`:
@@ -177,9 +229,7 @@ El resultado se guarda en `output/IB_<api>_<timestamp>.json`:
 
 ---
 
-## Modelos y Configuracion Claude
+## Configuracion del Pipeline
 
-- **Modelo:** `claude-opus-4-6` (ambos agentes)
-- **Thinking:** Adaptativo (`thinking: {type: "adaptive"}`)
 - **Max reintentos:** 3 (configurable en `orchestrator.py -> MAX_RETRIES`)
 - **Score minimo de aprobacion:** 90/100 (configurable en `config/enterprise_config.json`)

@@ -5,12 +5,14 @@ Skill: skills/format_validator_skill.md
 Valida que el payload generado por el Enterprise Formatter cumple con todos
 los estándares empresariales InfiniteBit. Emite APPROVED o REJECTED con
 diagnóstico detallado para reintento.
+
+Soporta cualquier proveedor LLM configurado en llm_client.py
 """
 
 import json
 from pathlib import Path
 
-import anthropic
+from llm_client import LLMClient, extract_json
 
 # ─── Rutas ────────────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
@@ -70,8 +72,6 @@ def run(formatted_payload: dict, attempt: int = 1) -> dict:
           - result["IB_ValidationResult"]["IB_Errors"]: lista de errores
           - result["IB_ValidationResult"]["IB_ShouldRetry"]: bool
     """
-    client = anthropic.Anthropic()
-
     skill = _load_skill()
     config = _load_config()
     conventions = _load_conventions()
@@ -93,31 +93,12 @@ de validación en formato IB_ValidationResult ahora:
 
     print(f"  [Agent 2] Validando (intento {attempt})...")
 
-    with client.messages.stream(
-        model="claude-opus-4-6",
-        max_tokens=4096,
-        thinking={"type": "adaptive"},
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_content}],
-    ) as stream:
-        final_message = stream.get_final_message()
-
-    # Extraer el texto de respuesta
-    response_text = ""
-    for block in final_message.content:
-        if block.type == "text":
-            response_text = block.text.strip()
-            break
-
-    # Limpiar bloques de código markdown si los hay
-    if response_text.startswith("```"):
-        lines = response_text.split("\n")
-        response_text = "\n".join(lines[1:-1]) if lines[-1] == "```" else "\n".join(lines[1:])
+    client = LLMClient()
+    response_text = client.complete(system=system_prompt, user=user_content, max_tokens=4096)
 
     try:
-        validation_result = json.loads(response_text)
-    except json.JSONDecodeError as exc:
-        # Si el validador falla al parsear, lo tratamos como rechazo técnico
+        validation_result = extract_json(response_text)
+    except ValueError as exc:
         return {
             "IB_ValidationResult": {
                 "IB_Status": "REJECTED",

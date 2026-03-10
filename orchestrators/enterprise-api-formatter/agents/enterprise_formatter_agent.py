@@ -4,13 +4,14 @@ Skill: skills/enterprise_formatter_skill.md
 
 Transforma requests y responses crudos al formato empresarial InfiniteBit,
 aplicando convenciones de nombres y el envelope corporativo.
+
+Soporta cualquier proveedor LLM configurado en llm_client.py
 """
 
 import json
-import os
 from pathlib import Path
 
-import anthropic
+from llm_client import LLMClient, extract_json
 
 # ─── Rutas ────────────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
@@ -77,8 +78,6 @@ def run(
     Returns:
         dict con el payload transformado en formato InfiniteBit.
     """
-    client = anthropic.Anthropic()
-
     skill = _load_skill()
     config = _load_config()
     conventions = _load_conventions()
@@ -118,34 +117,13 @@ Asegúrate de resolver TODOS los errores listados antes de generar el output.
 
     print(f"  [Agent 1] Formateando (intento {attempt})...")
 
-    with client.messages.stream(
-        model="claude-opus-4-6",
-        max_tokens=8192,
-        thinking={"type": "adaptive"},
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_content}],
-    ) as stream:
-        final_message = stream.get_final_message()
-
-    # Extraer el texto de respuesta (ignorar bloques thinking)
-    response_text = ""
-    for block in final_message.content:
-        if block.type == "text":
-            response_text = block.text.strip()
-            break
-
-    # Limpiar posibles bloques de código markdown
-    if response_text.startswith("```"):
-        lines = response_text.split("\n")
-        response_text = "\n".join(lines[1:-1]) if lines[-1] == "```" else "\n".join(lines[1:])
+    client = LLMClient()
+    response_text = client.complete(system=system_prompt, user=user_content, max_tokens=8192)
 
     try:
-        formatted_payload = json.loads(response_text)
-    except json.JSONDecodeError as exc:
-        raise ValueError(
-            f"Agent 1 produjo JSON inválido en intento {attempt}: {exc}\n"
-            f"Output recibido:\n{response_text}"
-        ) from exc
+        formatted_payload = extract_json(response_text)
+    except ValueError as exc:
+        raise ValueError(f"Agent 1 produjo JSON inválido en intento {attempt}: {exc}") from exc
 
     print(f"  [Agent 1] Formateo completado (intento {attempt}).")
     return formatted_payload
