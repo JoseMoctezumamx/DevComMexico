@@ -1,0 +1,21 @@
+{
+  "company": {
+    "name": "InfiniteBit",
+    "shortName": "IB",
+    "conventionVersion": "1.0.0",
+    "description": "Configuración empresarial de InfiniteBit para transformación de APIs"
+  },
+  "envelope": {
+    "headerKey": "IB_Header",
+    "requestKey": "IB_Request",
+    "responseKey": "IB_Response",
+    "metadataKey": "IB_Metadata",
+    "processedByAgent1": "InfiniteBit-EnterpriseFormatter-Agent",
+    "processedByAgent2": "InfiniteBit-FormatValidator-Agent"
+  },
+  "defaults": {
+    "apiVersion": "1.0",
+    "maxRetries": 3,
+    "validationScoreThreshold": 90
+  }
+}
