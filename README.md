@@ -101,6 +101,31 @@ pip install -r requirements.txt
 
 El sistema soporta múltiples proveedores. Configura via variables de entorno:
 
+#### GitHub Copilot — GPT-4o / GPT-4.1
+```bash
+# Token en: https://github.com/settings/tokens (scope: copilot)
+export LLM_PROVIDER=github-copilot
+export LLM_MODEL=gpt-4o          # o gpt-4.1, o3-mini
+export GITHUB_TOKEN=ghp_...
+```
+
+#### GitHub Models — GPT-4o (marketplace gratuito con limites)
+```bash
+# Token clasico de GitHub, sin scope especial
+# Modelos disponibles: https://github.com/marketplace/models
+export LLM_PROVIDER=github-models
+export LLM_MODEL=gpt-4o
+export GITHUB_TOKEN=ghp_...
+```
+
+#### Google Gemini — gemini-2.0-flash / gemini-1.5-pro
+```bash
+# Clave en: https://aistudio.google.com/apikey
+export LLM_PROVIDER=gemini
+export LLM_MODEL=gemini-2.0-flash    # o gemini-1.5-pro
+export GEMINI_API_KEY=AIza...
+```
+
 #### Anthropic (Claude) — default
 ```bash
 export LLM_PROVIDER=anthropic
@@ -122,7 +147,6 @@ ollama pull llama3.2
 
 export LLM_PROVIDER=ollama
 export LLM_MODEL=llama3.2
-# LLM_BASE_URL default: http://localhost:11434/v1
 ```
 
 #### Groq (ultra rapido, tier gratuito disponible)
@@ -130,15 +154,6 @@ export LLM_MODEL=llama3.2
 export LLM_PROVIDER=groq
 export LLM_MODEL=llama-3.3-70b-versatile
 export OPENAI_API_KEY=gsk_...
-export LLM_BASE_URL=https://api.groq.com/openai/v1
-```
-
-#### LM Studio u otro compatible OpenAI
-```bash
-export LLM_PROVIDER=custom
-export LLM_MODEL=nombre-del-modelo-local
-export LLM_BASE_URL=http://localhost:1234/v1
-export LLM_API_KEY=lm-studio
 ```
 
 ### 3. Configurar convenciones de nombres (importante)
@@ -188,11 +203,14 @@ python orchestrator.py --json-input examples/input_example.json
 
 ## Proveedores soportados
 
-| Proveedor | Variable `LLM_PROVIDER` | Requiere API Key | Modelos ejemplo |
-|-----------|------------------------|------------------|-----------------|
+| Proveedor | Variable `LLM_PROVIDER` | Variable de clave | Modelos ejemplo |
+|-----------|------------------------|-------------------|-----------------|
+| GitHub Copilot | `github-copilot` | `GITHUB_TOKEN` | gpt-4o, gpt-4.1, o3-mini |
+| GitHub Models | `github-models` | `GITHUB_TOKEN` | gpt-4o, Meta-Llama-3.1-70B |
+| Google Gemini | `gemini` | `GEMINI_API_KEY` | gemini-2.0-flash, gemini-1.5-pro |
 | Anthropic | `anthropic` (default) | `ANTHROPIC_API_KEY` | claude-opus-4-6, claude-sonnet-4-6 |
 | OpenAI | `openai` | `OPENAI_API_KEY` | gpt-4o, gpt-4-turbo |
-| Ollama (local) | `ollama` | No | llama3.2, mistral, qwen2.5 |
+| Ollama (local) | `ollama` | No requiere | llama3.2, mistral, qwen2.5 |
 | Groq | `groq` | `OPENAI_API_KEY` | llama-3.3-70b-versatile |
 | Azure OpenAI | `azure` | `OPENAI_API_KEY` | gpt-4o |
 | LM Studio / Custom | `custom` | `LLM_API_KEY` | cualquiera |
